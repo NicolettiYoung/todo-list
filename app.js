@@ -10,7 +10,10 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
+const routes = require('./routes')
+
 const app = express()
+
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 const db = mongoose.connection
@@ -31,13 +34,15 @@ app.use(bodyParser.urlencoded({ extend: true }))
 
 app.use(methodOverride('_method'))
 
-app.get('/', (req, res) => {
-  Todo.find()//取出Todo model裡的所有資料
-    .lean()//把Mongoose的Model物件轉換成乾淨的JavaScripts資料陣列
-    .sort({ _id: 'asc' })//根據_id升冪排序
-    .then(todos => res.render('index', { todos }))//將資料傳給index樣板
-    .catch(error => console.error(error))//錯誤處理
-})
+app.use(routes)
+
+// app.get('/', (req, res) => {
+//   Todo.find()//取出Todo model裡的所有資料
+//     .lean()//把Mongoose的Model物件轉換成乾淨的JavaScripts資料陣列
+//     .sort({ _id: 'asc' })//根據_id升冪排序
+//     .then(todos => res.render('index', { todos }))//將資料傳給index樣板
+//     .catch(error => console.error(error))//錯誤處理
+// })
 
 app.get('/todos/new', (req, res) => {
   return res.render('new')
